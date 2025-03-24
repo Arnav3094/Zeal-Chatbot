@@ -49,7 +49,6 @@ class RestaurantViewModel: ObservableObject {
     }
     
     private func filterRestaurants(dish: String?, cuisine: String?, location: String?) -> [Restaurant] {
-        print("all states: \(restaurants.map{$0.state})")
         return restaurants.filter{ restaurant in
             let matchesDish = dish == nil || restaurant.popular_dishes.contains(where: {$0.lowercased().contains(dish!.lowercased())})
             let matchesCuisine = cuisine == nil || restaurant.cuisines.contains(where: {$0.lowercased().contains(cuisine!.lowercased())})
