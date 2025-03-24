@@ -19,14 +19,11 @@ class RestaurantViewModel: ObservableObject {
     init(repository: RestaurantRepository = RestaurantRepository(), aiService: AIService = .shared) {
         self.repository = repository
         self.aiService = aiService
-        do {
-            try self.aiService.setup()
-        } catch (let error) {
-            errorMessage = "Error setting up AI Service: \(error.localizedDescription)"
-        }
         
     }
     
+    // Ensures that the UI updates are performed on the main thread
+    @MainActor
     func loadRestaurants() async {
         do {
             restaurants = try await repository.loadRestaurants()
@@ -35,7 +32,11 @@ class RestaurantViewModel: ObservableObject {
         }
     }
     
+    // Ensures that the UI updates are performed on the main thread
+    @MainActor
     func searchRestaurants(query: String) async {
+        print("searchRestaurants: \(query)")
+        
         do{
             let (dish, cuisine, location) = try await aiService.getResponse(input: query)
             searchResults = filterRestaurants(dish: dish, cuisine: cuisine, location: location)
