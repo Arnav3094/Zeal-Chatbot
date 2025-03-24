@@ -19,7 +19,6 @@ class RestaurantViewModel: ObservableObject {
     init(repository: RestaurantRepository = RestaurantRepository(), aiService: AIService = .shared) {
         self.repository = repository
         self.aiService = aiService
-        
     }
     
     // Ensures that the UI updates are performed on the main thread
@@ -44,10 +43,14 @@ class RestaurantViewModel: ObservableObject {
             print("❌ Error searching restaurants: \(error)")
             errorMessage = "Error searching restaurants: \(error.localizedDescription)"
         }
+        
+        // sorting the search results by rating
+        searchResults.sort(by: { ($0.rating ?? 0) > ($1.rating ?? 0) })
     }
     
     private func filterRestaurants(dish: String?, cuisine: String?, location: String?) -> [Restaurant] {
-        restaurants.filter{ restaurant in
+        print("all states: \(restaurants.map{$0.state})")
+        return restaurants.filter{ restaurant in
             let matchesDish = dish == nil || restaurant.popular_dishes.contains(where: {$0.lowercased().contains(dish!.lowercased())})
             let matchesCuisine = cuisine == nil || restaurant.cuisines.contains(where: {$0.lowercased().contains(cuisine!.lowercased())})
             let matchesLocation = location == nil || ((restaurant.city?.lowercased().contains(location!.lowercased())) == true) || ((restaurant.state?.lowercased().contains(location!.lowercased())) == true)
