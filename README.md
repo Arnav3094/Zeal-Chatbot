@@ -29,6 +29,8 @@ This Chatbot App is a SwiftUI-based application that leverages Natural Language 
 ---
 
 ## 📁 Project Structure
+
+```
 Zeal Chatbot/
 │── ContentView.swift               # Main UI layer built with SwiftUI
 │── RestaurantRepository.swift      # Handles JSON parsing, data extraction, caching
@@ -36,6 +38,7 @@ Zeal Chatbot/
 │── AIService.swift                 # Calls OpenAI API for user query processing
 │── Restaurant.swift                # Defines the restaurant struct
 │── 100_restaurant_data.json/                         # Contains restaurant data
+```
 
 ---
 
