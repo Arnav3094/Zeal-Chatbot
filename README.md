@@ -37,7 +37,7 @@ Zeal Chatbot/
 │── RestaurantViewModel.swift       # Manages restaurant data and business logic
 │── AIService.swift                 # Calls OpenAI API for user query processing
 │── Restaurant.swift                # Defines the restaurant struct
-│── 100_restaurant_data.json/                         # Contains restaurant data
+│── 100_restaurant_data.json/       # Contains restaurant data
 ```
 
 ---
