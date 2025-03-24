@@ -11,7 +11,9 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		490CC623DEB06D91EF4BF790 /* Pods-Zeal Chatbot.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Zeal Chatbot.debug.xcconfig"; path = "Target Support Files/Pods-Zeal Chatbot/Pods-Zeal Chatbot.debug.xcconfig"; sourceTree = "<group>"; };
 		509B87E32D9169C90082A58B /* Zeal Chatbot.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Zeal Chatbot.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		95C8703D2FC93AAB05EC21FE /* Pods-Zeal Chatbot.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Zeal Chatbot.release.xcconfig"; path = "Target Support Files/Pods-Zeal Chatbot/Pods-Zeal Chatbot.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -39,6 +41,7 @@
 			children = (
 				509B87E52D9169C90082A58B /* Zeal Chatbot */,
 				509B87E42D9169C90082A58B /* Products */,
+				B99FFE5FB61B1F847EE61449 /* Pods */,
 			);
 			sourceTree = "<group>";
 		};
@@ -50,6 +53,15 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		B99FFE5FB61B1F847EE61449 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				490CC623DEB06D91EF4BF790 /* Pods-Zeal Chatbot.debug.xcconfig */,
+				95C8703D2FC93AAB05EC21FE /* Pods-Zeal Chatbot.release.xcconfig */,
+			);
+			path = Pods;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -57,6 +69,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 509B87F12D9169CA0082A58B /* Build configuration list for PBXNativeTarget "Zeal Chatbot" */;
 			buildPhases = (
+				0BEE74890A6A163B66568EFE /* [CP] Check Pods Manifest.lock */,
 				509B87DF2D9169C90082A58B /* Sources */,
 				509B87E02D9169C90082A58B /* Frameworks */,
 				509B87E12D9169C90082A58B /* Resources */,
@@ -122,6 +135,31 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		0BEE74890A6A163B66568EFE /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-Zeal Chatbot-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		509B87DF2D9169C90082A58B /* Sources */ = {
@@ -255,12 +293,14 @@
 		};
 		509B87F22D9169CA0082A58B /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 490CC623DEB06D91EF4BF790 /* Pods-Zeal Chatbot.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"Zeal Chatbot/Preview Content\"";
+				DEVELOPMENT_TEAM = QZFVC6F497;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
@@ -283,12 +323,14 @@
 		};
 		509B87F32D9169CA0082A58B /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 95C8703D2FC93AAB05EC21FE /* Pods-Zeal Chatbot.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"Zeal Chatbot/Preview Content\"";
+				DEVELOPMENT_TEAM = QZFVC6F497;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
