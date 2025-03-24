@@ -1,6 +1,6 @@
 # Zeal-Chatbot
 
-This Chatbot App is a SwiftUI-based application that leverages Natural Language Processing (NLP), OpenAI's GPT-4.0 mini API, and efficient caching mechanisms to help users discover restaurants based on various criteria such as cuisine, location, and popular dishes. It intelligently processes real-world, messy JSON data to extract relevant details and provide fast, accurate, and personalized recommendations.
+This Chatbot App is a SwiftUI-based application that leverages Natural Language Processing (NLP), OpenAI's GPT-4o-mini API, and efficient caching mechanisms to help users discover restaurants based on various criteria such as cuisine, location, and popular dishes. It intelligently processes real-world, messy JSON data to extract relevant details and provide fast, accurate, and personalized recommendations.
 
 ---
 
@@ -22,7 +22,7 @@ This Chatbot App is a SwiftUI-based application that leverages Natural Language 
 
 ### 🔍 AI-Powered Search
 
-- OpenAI GPT-4.0 mini API – Used for processing user queries and extracting key search parameters (e.g., location, dish, cuisine).
+- OpenAI GPT-4o-mini API – Used for processing user queries and extracting key search parameters (e.g., location, dish, cuisine).
 
 - Prompt Engineering – Used a carefully crafted prompt help extract structured keywords from user input for precise search matching.
 
@@ -62,7 +62,7 @@ Zeal Chatbot/
 
 ### 2️⃣ AI-Powered Query Interpretation
 
-- Uses GPT-4.0 mini API to analyze user queries.
+- Uses GPT-4o-mini API to analyze user queries.
 
 - Extracts structured keywords: location, cuisine, dish, etc.
 
@@ -98,7 +98,7 @@ Zeal Chatbot/
 
 - Swift 5+
 
-- OpenAI API key for GPT-4.0 mini integration
+- OpenAI API key for GPT-4o-mini integration
 
 ### Steps
 
