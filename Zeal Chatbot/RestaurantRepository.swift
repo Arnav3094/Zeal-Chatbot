@@ -6,10 +6,14 @@
 //
 
 import Foundation
+import CryptoKit
 
 struct RestaurantRepository{
     
-    /// Loads the restaurant data from the JSON file, extracting cuisines and dishes from multiple fields.
+    private let hashKey: String = "restaurant_data"
+    private let cachedDataKey: String = "cached_restaurant_data"
+    
+    /// Loads the restaurant data by computing from the JSON file, only recomputing if the hash changes, otherwise returning the cached data.
     /// - Returns: An array of `Restaurant` objects with enhanced keyword extraction.
     func loadRestaurants() async throws -> [Restaurant] {
         guard let url = Bundle.main.url(forResource: "100_restaurant_data", withExtension: "json"),
@@ -17,6 +21,18 @@ struct RestaurantRepository{
             print("❌ Failed to load JSON")
             throw NSError(domain: "RestaurantRepository", code: 0, userInfo: [NSLocalizedDescriptionKey: "Failed to load JSON"])
         }
+        
+        let currentHash = computeSHA256(for: data)
+        let storedHash = UserDefaults.standard.string(forKey: hashKey)
+        
+        if let storedHash = storedHash, storedHash == currentHash,
+           let cachedData = UserDefaults.standard.data(forKey: cachedDataKey),
+           let cachedRestaurants = try? JSONDecoder().decode([Restaurant].self, from: cachedData) {
+            print("✅ Using cached restaurant data")
+            return cachedRestaurants
+        }
+        
+        print("🔄 Hash changed or no cache found. Recomputing...")
 
         do {
             // Decode JSON as an array of dictionaries to process fields manually
@@ -96,17 +112,30 @@ struct RestaurantRepository{
                 restaurants.append(restaurant)
             }
 
-            print("✅ Successfully processed \(restaurants.count) restaurants with enhanced cuisine & dish extraction")
+            print("✅ Successfully processed \(restaurants.count) restaurants.")
+            
+            // Store the hash and cache the data
+            UserDefaults.standard.set(currentHash, forKey: hashKey)
+            if let cachedData = try? JSONEncoder().encode(restaurants) {
+                UserDefaults.standard.set(cachedData, forKey: cachedDataKey)
+            }
+            
             return restaurants
         } catch {
             print("❌ JSON Decoding Error: \(error)")
             return []
         }
     }
+    
+    /// Computes the SHA-256 hash of the given data.
+    private func computeSHA256(for data: Data) -> String {
+        let hash = SHA256.hash(data: data)
+        return hash.map { String(format: "%02x", $0) }.joined()
+    }
 
     /// Extracts cuisine names from a given text using keyword matching.
     private func extractCuisines(from text: String) -> Set<String> {
-        let knownCuisines: Set<String> = ["italian", "chinese", "mexican", "indian", "thai", "japanese", "french", "mediterranean", "korean"]
+        let knownCuisines: Set<String> = ["italian", "chinese", "indian", "thai", "mexican", "japanese", "french", "greek", "mediterranean", "american", "korean", "spanish"]
         let words = Set(text.lowercased().split(separator: " ").map{ String($0) })
         return words.intersection(knownCuisines)
     }
