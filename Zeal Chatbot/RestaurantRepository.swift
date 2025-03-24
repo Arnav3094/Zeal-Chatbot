@@ -28,8 +28,10 @@ struct RestaurantRepository{
         
         if let storedHash = storedHash, storedHash == currentHash,
            let cachedData = UserDefaults.standard.data(forKey: cachedDataKey),
-           let cachedRestaurants = try? JSONDecoder().decode([Restaurant].self, from: cachedData) {
+           let cachedRestaurants = try? JSONDecoder().decode([Restaurant].self, from: cachedData),
+           cachedRestaurants.count > 0{
             print("✅ Using cached restaurant data")
+            print("cachedRestaurants.count: \(cachedRestaurants.count)")
             return cachedRestaurants
         }
         
@@ -48,7 +50,10 @@ struct RestaurantRepository{
                 let id = json["id"] as? Int ?? -1
                 let name = json["name"] as? String ?? "Unknown Restaurant"
                 let city = (json["city"] as? String).flatMap { $0.isEmpty ? nil : $0 }
-                let state = (json["state"] as? String).flatMap { $0.isEmpty ? nil : $0 }
+                var state = (json["state"] as? String).flatMap { $0.isEmpty ? nil : $0 }
+                if state?.lowercased() == "california"{
+                    state = "CA"
+                }
                 let country = json["country"] as? String
                 let street_address = json["street_address"] as? String
                 let zip_code = json["zip_code"] as? String
@@ -127,7 +132,7 @@ struct RestaurantRepository{
     private func extractCuisines(from text: String) -> [String] {
         var matchedCuisines = [String]()
         
-        let knownCuisines: Set<String> = ["italian", "chinese", "indian", "thai", "mexican", "japanese", "french", "greek", "mediterranean", "american", "korean", "spanish", "tapas", "vietnamese", "middle eastern", "turkish", "caribbean", "peruvian", "brazilian", "argentinian", "african", "moroccan", "ethiopian", "lebanese", "israeli", "german", "russian", "polish", "czech", "hungarian", "austrian", "swiss", "belgian", "dutch", "scandinavian", "irish", "british", "scottish", "welsh", "portuguese", "spanish", "catalan", "basque", "australian", "new zealand", "polynesian", "hawaiian", "filipino", "malaysian", "indonesian", "singaporean", "vietnamese", "thai", "korean", "japanese", "taiwanese", "indian", "pakistani", "bangladeshi", "sri lankan", "nepalese", "tibetan", "afghan", "iranian", "iraqi", "syrian", "lebanese", "israeli", "turkish", "greek", "egyptian", "moroccan", "tunisian", "algerian", "nigerian", "ethiopian", "kenyan", "ugandan", "ghanaian", "south african", "zimbabwean", "zambian", "australian", "new zealand", "polynesian", "hawaiian", "filipino", "malaysian", "indonesian", "singaporean", "vietnamese", "thai", "korean", "japanese", "taiwanese", "indian", "pakistani", "bangladeshi", "sri lankan", "nepalese", "tibetan", "afghan", "iranian", "iraqi", "syrian", "lebanese", "israeli", "turkish", "greek", "egyptian", "moroccan", "tunisian", "algerian", "nigerian", "ethiopian", "kenyan", "ugandan"]
+        let knownCuisines: Set<String> = ["italian", "chinese", "indian", "thai", "mexican", "japanese", "french", "greek", "mediterranean", "american", "korean", "spanish", "tapas", "vietnamese", "middle eastern", "turkish", "caribbean", "peruvian", "brazilian", "argentinian", "african", "moroccan", "ethiopian", "lebanese", "israeli", "german", "russian", "polish", "czech", "hungarian", "austrian", "swiss", "belgian", "dutch", "scandinavian", "irish", "british", "scottish", "welsh", "portuguese", "catalan", "basque", "australian", "new zealand", "polynesian", "hawaiian", "filipino", "malaysian", "indonesian", "singaporean", "taiwanese", "pakistani", "bangladeshi", "sri lankan", "nepalese", "tibetan", "afghan", "iranian", "iraqi", "syrian", "egyptian", "tunisian", "algerian", "nigerian", "kenyan", "ugandan", "ghanaian", "south african", "zimbabwean", "zambian", "australian", "new zealand", "polynesian", "hawaiian", "filipino", "malaysian", "indonesian", "singaporean", "taiwanese", "indian", "pakistani", "bangladeshi", "sri lankan", "nepalese", "tibetan", "afghan", "iranian", "iraqi", "syrian", "lebanese", "israeli", "turkish", "egyptian", "moroccan", "tunisian", "algerian", "nigerian", "ethiopian", "kenyan", "ugandan"]
         
         for cuisine in knownCuisines {
             if text.lowercased().contains(cuisine.lowercased()) {
