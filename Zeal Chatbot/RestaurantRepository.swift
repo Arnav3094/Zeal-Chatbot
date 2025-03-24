@@ -7,6 +7,7 @@
 
 import Foundation
 import CryptoKit
+import NaturalLanguage
 
 struct RestaurantRepository{
     
@@ -57,36 +58,22 @@ struct RestaurantRepository{
                 let restaurant_url = json["restaurant_url"] as? String
                 let latitude = json["latitude"] as? Double
                 let longitude = json["longitude"] as? Double
-                let description = json["description"] as? String
-                let endorsement_copy = json["endorsement_copy"] as? String
+                let description = (json["description"] as? String) ?? ""
+                let endorsement_copy = (json["endorsement_copy"] as? String) ?? ""
+                let cuisinesList = (json["cuisine_list"] as? String) ?? ""
+                let tags = (json["tags"] as? String) ?? ""
+                let reviews = (json["top_reviews"] as? [String]) ?? []
 
-                // Extract cuisines
-                var cuisines = Set<String>()
-                if let cuisineList = json["cuisines"] as? [String] {
-                    cuisines.formUnion(cuisineList.map { $0.lowercased() })
-                }
-                if let endorsement = endorsement_copy {
-                    cuisines.formUnion(extractCuisines(from: endorsement))
-                }
-                if let desc = description {
-                    cuisines.formUnion(extractCuisines(from: desc))
-                }
-                if let tags = json["tags"] as? [String] {
-                    cuisines.formUnion(tags.map { $0.lowercased() })
-                }
+                // Proceed even if some values are empty
+                let combinedText = [cuisinesList, endorsement_copy, description, tags].joined(separator: " ")
+                let extractedCuisines = extractCuisines(from: combinedText)
+                var extractedDishes = extractDishes(from: combinedText)
 
-                // Extract popular dishes
-                var popularDishes = Set<String>()
-                if let dishList = json["popular_dishes"] as? [String] {
-                    popularDishes.formUnion(dishList.map { $0.lowercased() })
+                // Process only positive reviews
+                for review in reviews where analyzeSentiment(review) {
+                    extractedDishes.append(contentsOf: extractDishes(from: review))
                 }
-                if let endorsement = endorsement_copy {
-                    popularDishes.formUnion(extractDishes(from: endorsement))
-                }
-                if let desc = description {
-                    popularDishes.formUnion(extractDishes(from: desc))
-                }
-
+                
                 let restaurant = Restaurant(
                     id: id,
                     name: name,
@@ -96,8 +83,8 @@ struct RestaurantRepository{
                     street_address: street_address,
                     zip_code: zip_code,
                     phone_number: phone_number,
-                    cuisines: Array(cuisines),
-                    popular_dishes: Array(popularDishes),
+                    cuisines: Array(Set(extractedCuisines)),
+                    popular_dishes: Array(Set(extractedDishes)),
                     rating: rating,
                     image_url: image_url,
                     restaurant_url: restaurant_url,
@@ -108,8 +95,11 @@ struct RestaurantRepository{
                     tags: json["tags"] as? [String],
                     endorsement_copy: endorsement_copy
                 )
-
+                
+                print("✅ Successfully processed restaurant: \(restaurant.name)")
                 restaurants.append(restaurant)
+                print("restaurants.count: \(restaurants.count)")
+
             }
 
             print("✅ Successfully processed \(restaurants.count) restaurants.")
@@ -134,19 +124,84 @@ struct RestaurantRepository{
     }
 
     /// Extracts cuisine names from a given text using keyword matching.
-    private func extractCuisines(from text: String) -> Set<String> {
-        let knownCuisines: Set<String> = ["italian", "chinese", "indian", "thai", "mexican", "japanese", "french", "greek", "mediterranean", "american", "korean", "spanish"]
-        let words = Set(text.lowercased().split(separator: " ").map{ String($0) })
-        return words.intersection(knownCuisines)
+    private func extractCuisines(from text: String) -> [String] {
+        var matchedCuisines = [String]()
+        
+        let knownCuisines: Set<String> = ["italian", "chinese", "indian", "thai", "mexican", "japanese", "french", "greek", "mediterranean", "american", "korean", "spanish", "tapas", "vietnamese", "middle eastern", "turkish", "caribbean", "peruvian", "brazilian", "argentinian", "african", "moroccan", "ethiopian", "lebanese", "israeli", "german", "russian", "polish", "czech", "hungarian", "austrian", "swiss", "belgian", "dutch", "scandinavian", "irish", "british", "scottish", "welsh", "portuguese", "spanish", "catalan", "basque", "australian", "new zealand", "polynesian", "hawaiian", "filipino", "malaysian", "indonesian", "singaporean", "vietnamese", "thai", "korean", "japanese", "taiwanese", "indian", "pakistani", "bangladeshi", "sri lankan", "nepalese", "tibetan", "afghan", "iranian", "iraqi", "syrian", "lebanese", "israeli", "turkish", "greek", "egyptian", "moroccan", "tunisian", "algerian", "nigerian", "ethiopian", "kenyan", "ugandan", "ghanaian", "south african", "zimbabwean", "zambian", "australian", "new zealand", "polynesian", "hawaiian", "filipino", "malaysian", "indonesian", "singaporean", "vietnamese", "thai", "korean", "japanese", "taiwanese", "indian", "pakistani", "bangladeshi", "sri lankan", "nepalese", "tibetan", "afghan", "iranian", "iraqi", "syrian", "lebanese", "israeli", "turkish", "greek", "egyptian", "moroccan", "tunisian", "algerian", "nigerian", "ethiopian", "kenyan", "ugandan"]
+        
+        for cuisine in knownCuisines {
+            if text.lowercased().contains(cuisine.lowercased()) {
+                matchedCuisines.append(cuisine)
+            } else if fuzzyMatch(text, cuisine) { // Fuzzy matching
+                print("Fuzzy match found for \(cuisine)")
+                matchedCuisines.append(cuisine)
+            }
+        }
+        
+        return Array(Set(matchedCuisines)) // Remove duplicates
     }
 
     /// Extracts dish names from a given text using keyword matching.
-    private func extractDishes(from text: String) -> Set<String> {
-        let knownDishes: Set<String> = ["pizza", "burger", "pasta", "sushi", "tacos", "ramen", "biryani", "steak", "pancakes"]
-        let words = Set(text.lowercased().split(separator: " ").map{ String($0) })
-        return words.intersection(knownDishes)
+    private func extractDishes(from text: String) -> [String] {
+        var matchedDishes = [String]()
+        
+        let knownDishes: Set<String> = ["pizza", "burger", "pasta", "sushi", "tacos", "ramen", "biryani", "steak", "pancakes", "chicken", "fish", "ice cream", "coffee", "tea", "donuts", "cappuccino", "cereal", "chocolate, cake"]
+        
+        for dish in knownDishes {
+            if text.lowercased().contains(dish.lowercased()) {
+                matchedDishes.append(dish)
+            } else if fuzzyMatch(text, dish) {
+                print("Fuzzy match found for \(dish)")
+                matchedDishes.append(dish)
+            }
+        }
+        
+        return Array(Set(matchedDishes))
     }
 
-    
-}
+    private func fuzzyMatch(_ text: String, _ keyword: String) -> Bool {
+        let distance = levenshteinDistance(text.lowercased(), keyword.lowercased())
+        return distance < 2 // Allow slight variations
+    }
 
+    private func levenshteinDistance(_ a: String, _ b: String) -> Int {
+        let aCount = a.count
+        let bCount = b.count
+        var matrix = [[Int]]()
+
+        for i in 0...aCount {
+            matrix.append(Array(repeating: 0, count: bCount + 1))
+            matrix[i][0] = i
+        }
+
+        for j in 0...bCount {
+            matrix[0][j] = j
+        }
+
+        for i in 1...aCount {
+            for j in 1...bCount {
+                if Array(a)[i - 1] == Array(b)[j - 1] {
+                    matrix[i][j] = matrix[i - 1][j - 1]
+                } else {
+                    matrix[i][j] = min(matrix[i - 1][j - 1] + 1, // substitution
+                                       min(matrix[i][j - 1] + 1, // insertion
+                                           matrix[i - 1][j] + 1)) // deletion
+                }
+            }
+        }
+
+        return matrix[aCount][bCount]
+    }
+
+    /// Analyzes sentiment of the given text.
+    private func analyzeSentiment(_ text: String) -> Bool {
+        let tagger = NLTagger(tagSchemes: [.sentimentScore])
+        tagger.string = text
+        let sentiment = tagger.tag(at: text.startIndex, unit: .paragraph, scheme: .sentimentScore).0
+        
+        if let sentimentScore = sentiment?.rawValue, let score = Double(sentimentScore) {
+            return score > 0 // Consider positive sentiment
+        }
+        return false
+    }
+}
