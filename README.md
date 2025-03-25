@@ -100,6 +100,8 @@ Zeal Chatbot/
 
 - OpenAI API key for GPT-4o-mini integration
 
+- Simulator or Physical Device running iOS 18.2+
+
 ### Steps
 
 1. Clone the repository:
@@ -117,6 +119,9 @@ Zeal Chatbot/
    <img width="549" alt="Screenshot 2025-03-25 at 12 00 24 AM" src="https://github.com/user-attachments/assets/08c93ea2-4c10-4692-9bda-dbefc184777b" />
 
 6. Run the app on the iOS simulator or a real device.
+
+7. If you wish to run on a physical device, click "Run". It won't start on the physical device, first the development team will have to be trusted.
+On the physical device, head over to `Settings > General > VPN & Device Management`. Trust `arnav3094pvt@gmail.com`. If the app does not launch, re-run via XCode.
 
 Note: The app will require some time to process the data when you open the application for the first time. After the initial processing, enjoy **blazing fast querying**.
 
